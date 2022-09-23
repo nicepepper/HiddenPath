@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using CustomGameEvent;
 using UnityEngine;
 
@@ -11,7 +9,6 @@ public class DamageTaking : MonoBehaviour
    public void TakeDamage(int amount)
    {
       _hitPoint -= amount;
-      
       if (_hitPoint <= 0)
       {
          if (_gameOverOnDestoyed)

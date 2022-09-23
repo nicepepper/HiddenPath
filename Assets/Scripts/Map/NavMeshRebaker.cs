@@ -7,7 +7,7 @@ namespace Map
     public class NavMeshRebaker : MonoBehaviour
     {
         private NavMeshSurface _navMeshSurface;
-
+        
         private void Awake()
         {
             _navMeshSurface = GetComponent<NavMeshSurface>();

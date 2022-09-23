@@ -1,8 +1,4 @@
-
-
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -38,7 +34,6 @@ namespace CustomGameEvent
             {
                 OnMovePlayer.Invoke(true);
             }
-            
             _playerPosition = position;
         }
         
@@ -107,7 +102,6 @@ namespace CustomGameEvent
                 unityEvent.AddListener(action);
                 _actions[stage] = unityEvent;
             }
-
             if (Current == stage)
             {
                 action.Invoke();
@@ -125,7 +119,6 @@ namespace CustomGameEvent
         private static void Invoke(GameStage stage)
         {
             _onChangedStage.Invoke();
-
             if (_actions.TryGetValue(stage, out var unityAction))
             {
                 unityAction.Invoke();

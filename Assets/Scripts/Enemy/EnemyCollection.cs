@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Enemy
 {
@@ -27,6 +28,17 @@ namespace Enemy
             }
         }
 
+        public void Stop()
+        {
+            foreach (var enemy in _enemies)
+            {
+                if (enemy != null)
+                {
+                    enemy.Stop();
+                }
+            }
+        }
+
         public void DestroyEnemies()
         {
             for (int i = 0; i < _enemies.Count; i++)
@@ -36,6 +48,7 @@ namespace Enemy
                     _enemies[i].Destroy();
                 }
             }
+            
             _enemies.Clear();
         }
     }

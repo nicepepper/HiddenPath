@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using CustomGameEvent;
 using UnityEngine;
 
@@ -20,7 +17,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void Movement()
     {
-        if (_playerController != null)
+        if (_playerController != null && GameEvent.Current == GameStage.START)
         {
             var HorizontalValue = Input.GetAxis("Horizontal");
             var VerticalValue = Input.GetAxis("Vertical");

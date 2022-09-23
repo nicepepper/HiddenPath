@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using CustomGameEvent;
 using UnityEngine;
@@ -15,12 +13,7 @@ namespace Enemy
         private NavMeshAgent _agent;
         private FieldOfView _fieldOfView;
         private Vector3 CurrentTarget { get; set; }
-        private List<Vector3> _patrolPoints = new List<Vector3>()
-        {
-            new Vector3(10.5f, 1f, 10.5f),
-            new Vector3(1.25f, 1f, 23.75f),
-            new Vector3(23.75f, 1f, 23.75f)
-        };
+        private List<Vector3> _patrolPoints = new List<Vector3>();
         private int _nextPatrolPoint;
         private int _previousPatrolPoint;
         private Stage _currentStage;
@@ -31,8 +24,7 @@ namespace Enemy
             GUARD,
             CHASE
         }
-        private float MAX_STOP_DISTANCE_TO_TARGET = 0.1f;
-        
+        private float MAX_STOP_DISTANCE_TO_TARGET = 0.5f;
         
         public bool GameUpdate()
         {
@@ -57,7 +49,17 @@ namespace Enemy
         {
             Destroy(gameObject);
         }
-        
+
+        public void AddPatrolPoint(Vector3 position)
+        {
+            _patrolPoints.Add(position);
+        }
+
+        public void Stop()
+        {
+            _agent.isStopped = _agent.isStopped != true;
+        }
+
         private void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();
@@ -65,7 +67,6 @@ namespace Enemy
             _currentStage = Stage.GUARD;
             _nextPatrolPoint = 0;
             _previousPatrolPoint = 0;
-            
             if (_patrolPoints.Count != 0)
             {
                 _agent.Warp(_patrolPoints[0]);
@@ -83,12 +84,12 @@ namespace Enemy
             if (_patrolPoints.Count > 1)
             {
                 UpdateDestination();
-                
                 if (Vector3.Distance(transform.position, _patrolPoints[_nextPatrolPoint]) < MAX_STOP_DISTANCE_TO_TARGET)
                 {
                     _agent.ResetPath();
                     _currentStage = Stage.GUARD;
                 }
+               
                 return;
             }
 
@@ -100,12 +101,10 @@ namespace Enemy
          private void ProcessGuard()
          {
              _elapsedTime += Time.deltaTime;
-             
              if (_elapsedTime >= _guardTime)
              {
                  _elapsedTime = 0;
                  _currentStage = Stage.PATROL;
-                 
                  if (_patrolPoints.Count > 1)
                  {
                      IterateNextPointIndex();

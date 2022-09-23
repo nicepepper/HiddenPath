@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class DamageOnCollide : MonoBehaviour
@@ -20,9 +17,4 @@ public class DamageOnCollide : MonoBehaviour
     {
         HitObject(collider.gameObject);
     }
-
-    // private void OnCollisionEnter(Collision collision)
-    // {
-    //     HitObject(collision.gameObject);
-    // }
 }

@@ -1,4 +1,3 @@
-using System;
 using CustomGameEvent;
 using UnityEngine;
 using UnityEngine.UI;
@@ -56,7 +55,6 @@ public class SliderNoize : MonoBehaviour
         if (_isMovePlayer)
         {
             _offset = _noiseIncrease * Time.deltaTime;
-            
             if (_maxNoize - _currentNoiseValue > _offset )
             {
                 _currentNoiseValue += _offset;
@@ -72,7 +70,6 @@ public class SliderNoize : MonoBehaviour
             if (_currentNoiseValue > _minNoize)
             {
                 _offset = _noiseReduction * Time.deltaTime;
-                
                 if (_currentNoiseValue - _minNoize > _offset)
                 {
                     _currentNoiseValue -= _offset;

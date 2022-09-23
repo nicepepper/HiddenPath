@@ -1,4 +1,3 @@
-using System;
 using CustomGameEvent;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,7 +14,6 @@ namespace UI
         [SerializeField] private Button _btnStart;
         [SerializeField] private Button _btnQuit;
         [SerializeField] private Button _btnToMenu;
-
         [SerializeField] private Text _endText;
 
         private void Awake()
@@ -34,10 +32,8 @@ namespace UI
         private void OnChangedGameStage()
         {
             var state = GameEvent.Current;
-            
             _uiMainMenu.SetActive(state == GameStage.PREPARE);
             _uiGameplay.SetActive(state == GameStage.START);
-            
             if (state == GameStage.WIN || state == GameStage.LOSE)
             {
                 _uiEnd.SetActive(true);

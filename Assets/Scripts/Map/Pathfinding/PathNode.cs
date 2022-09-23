@@ -1,4 +1,4 @@
-namespace Map
+namespace Map.Pathfinding
 {
     public class PathNode
     {
@@ -6,13 +6,7 @@ namespace Map
         public int PathLengthFromStart { get; set; }
         public PathNode CameFrom { get; set; }
         public int HeuristicEstimatePathLength { get; set; }
-        public int EstimateFullPathLength
-        {
-            get
-            {
-                return this.PathLengthFromStart + this.HeuristicEstimatePathLength;
-            }
-        }
+        public int EstimateFullPathLength => this.PathLengthFromStart + this.HeuristicEstimatePathLength;
     }
 }
 

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Map
+namespace Map.Pathfinding
 {
-    public static class Pathfinding
+    public class Pathfinding
     {
         public static List<Point> FindPath(int[,] field, Point start, Point goal)
         {
@@ -18,6 +18,7 @@ namespace Map
                 PathLengthFromStart = 0,
                 HeuristicEstimatePathLength = GetHeuristicPathLength(start, goal)
             };
+            
             openSet.Add(startNode);
             while (openSet.Count > 0)
             {
@@ -26,7 +27,7 @@ namespace Map
                 {
                     return GetPathForNode(currentNode);
                 }
-
+                
                 openSet.Remove(currentNode);
                 closeSet.Add(currentNode);
                 foreach (var neighbourNode in GetNeighbours(currentNode, goal, field))
@@ -35,7 +36,7 @@ namespace Map
                     {
                         continue;
                     }
-
+                    
                     var openNode = openSet.FirstOrDefault(node => node.Position == neighbourNode.Position);
                     if (openNode == null)
                     {
@@ -51,7 +52,7 @@ namespace Map
                     }
                 }
             }
-        
+            
             return null;
         }
 
@@ -63,30 +64,30 @@ namespace Map
         private static Collection<PathNode> GetNeighbours(PathNode pathNode, Point goal, int[,] field)
         {
             var result =new Collection<PathNode>();
-        
             Point[] neighbourPoints = new Point[4];
+            
             neighbourPoints[0] = new Point(pathNode.Position.X + 1, pathNode.Position.Y);
             neighbourPoints[1] = new Point(pathNode.Position.X - 1, pathNode.Position.Y);
             neighbourPoints[2] = new Point(pathNode.Position.X , pathNode.Position.Y + 1);
             neighbourPoints[3] = new Point(pathNode.Position.X, pathNode.Position.Y - 1);
-
+            
             foreach (var point in neighbourPoints)
             {
                 if (point.X < 0 || point.X >= field.GetLength(0))
                 {
                     continue;
                 }
-
+                
                 if (point.Y < 0 || point.Y >= field.GetLength(1))
                 {
                     continue;
                 }
-
-                if ((field[point.X, point.Y]) != 0 && (field[point.X, point.Y] != 1) )
+                
+                if ((field[point.X, point.Y]) != 0 && (field[point.X, point.Y]) != 1)
                 {
                     continue;
                 }
-
+                
                 var neighbourNode = new PathNode()
                 {
                     Position = point,
@@ -96,7 +97,7 @@ namespace Map
                 };
                 result.Add(neighbourNode);
             }
-
+            
             return result;
         }
 
@@ -109,13 +110,14 @@ namespace Map
         {
             var result = new List<Point>();
             var currentNode = pathNode;
+            
             while (currentNode != null)
             {
                 result.Add(currentNode.Position);
                 currentNode = currentNode.CameFrom;
             }
-
             result.Reverse();
+            
             return result;
         }
     }

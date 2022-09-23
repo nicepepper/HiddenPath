@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using CustomGameEvent;
-using Unity.VisualScripting;
 using UnityEngine;
 using Enemy;
 using Map;
-using UnityEngine.AI;
+using Unity.VisualScripting;
 
 namespace Game
 {
@@ -13,10 +11,12 @@ namespace Game
     {
         [SerializeField] private PlayerController _prefabPlayer;
         [SerializeField] private Enemy.Enemy _prefabEnemy;
+        [SerializeField] private int _numberOfWaypoints = 2;
+        [SerializeField] private int _numberOfEnemies = 2;
         [SerializeField] private Transform _startPoint;
         [SerializeField] private NavMeshRebaker _navMesh;
-    
-        private PlayerController _currentPlayer { get; set; }
+        [SerializeField] private GameBoard _board;
+        private PlayerController CurrentPlayer { get; set; }
         private PlayerMovement _playerMovement;
         private EnemyCollection _enemies = new EnemyCollection();
 
@@ -26,6 +26,7 @@ namespace Game
             GameEvent.OnPrepare += OnGamePrepare;
             GameEvent.OnStart += OnGameStart;
             GameEvent.OnQuit += OnGameQuit;
+            GameEvent.OnChangedStage += OnChangedGameStage;
         }
 
         private void Update()
@@ -41,6 +42,7 @@ namespace Game
             GameEvent.OnPrepare -= OnGamePrepare;
             GameEvent.OnStart -= OnGameStart;
             GameEvent.OnQuit -= OnGameQuit;
+            GameEvent.OnChangedStage -= OnChangedGameStage;
         }
 
         private void CheckGameOver()
@@ -50,29 +52,31 @@ namespace Game
         
         private void OnGamePrepare()
         {
-            if (_currentPlayer != null)
+            if (CurrentPlayer != null)
             {
-                _currentPlayer.Destroy();
+                CurrentPlayer.Destroy();
             }
+            
+            _board.ClearBoard();
             _enemies.DestroyEnemies();
         }
 
         private void OnGameStart()
         {
+            _board.SpawnObstacles();
             _navMesh.Rebake();
-
-            if (_currentPlayer != null)
+            if (CurrentPlayer != null)
             {
-                _currentPlayer.Destroy();
+                CurrentPlayer.Destroy();
             }
             
-            _currentPlayer = Instantiate(_prefabPlayer, _startPoint.position, _startPoint.rotation);
-            if (_currentPlayer != null)
+            CurrentPlayer = Instantiate(_prefabPlayer, _startPoint.position, _startPoint.rotation);
+            if (CurrentPlayer != null)
             {
-                _playerMovement.SetPlayerController(_currentPlayer);
+                _playerMovement.SetPlayerController(CurrentPlayer);
             }
             
-            EnemySpawn(new Vector3(5f,5f,5f));
+            EnemySpawn();
         }
         
         private void OnGameQuit()
@@ -80,9 +84,45 @@ namespace Game
             Application.Quit();
         }
 
-        private void EnemySpawn(Vector3 _position)
+        private void OnChangedGameStage()
         {
-            _enemies.Add(Instantiate(_prefabEnemy, _position, Quaternion.identity));
+            if (GameEvent.Current != GameStage.START)
+            {
+                _enemies.Stop();
+            }
+        }
+
+        private void EnemySpawn()
+        {
+            var wayPoints = new List<Vector3>();
+            GetWayPoint(wayPoints);
+            Enemy.Enemy curEnemy = Instantiate(_prefabEnemy, wayPoints[0], Quaternion.identity);
+            SetWaypoints(curEnemy, wayPoints);
+            _enemies.Add(curEnemy);
+        }
+
+        private void GetWayPoint(List<Vector3> points)
+        {
+            if (_numberOfWaypoints != 0)
+            {
+                for (int i = 0; i < _numberOfWaypoints; i++)
+                {
+                    var position = _board.GetRandomPositionWithPathToEnd();
+                    var badPosition = new Vector3(-1f, -1f, -1f);
+                    if (position != badPosition)
+                    {
+                        points.Add(position);
+                    }
+                }
+            }
+        }
+        
+        private void SetWaypoints(Enemy.Enemy enemy, List<Vector3> wayPoints)
+        {
+            foreach (var point in wayPoints)
+            {
+                enemy.AddPatrolPoint(point);
+            }
         }
     }
 }
